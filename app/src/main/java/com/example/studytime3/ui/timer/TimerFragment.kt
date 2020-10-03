@@ -22,6 +22,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
+/*
+    Instead of using timer fragment in view pager use nav graph to get to timer fragment
+
+    This gives timer fragment enough time to instantiate while the navigation occures
+
+    if used in view pager it glitches becauase of the time it takes to instantiate timer fragment
+ */
 @AndroidEntryPoint
 class TimerFragment : Fragment() {
 
