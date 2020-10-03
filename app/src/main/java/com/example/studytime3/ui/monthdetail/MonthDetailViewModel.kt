@@ -17,6 +17,18 @@ class MonthDetailViewModel @ViewModelInject constructor(
     private val months = arrayListOf<String>("January", "February" ,"March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
     var month: String = ""
 
+    /*
+        Flow makes this code much cleaner when using .asLiveData can specify a dispatcher if the operation is heavy
+        Deault time out for asLiveData is 5000s mili
+
+        Look into using this for a network call and specify a dispatcher.
+
+        switch map on an id then map a network call or local data query and map the data to many different live datas
+
+        maps with flows are concurrent
+
+        flow allows for cleaner code and not having to use live data builder or backing properties
+     */
 
     private val _monthSelected = MutableLiveData<Int>()
 
