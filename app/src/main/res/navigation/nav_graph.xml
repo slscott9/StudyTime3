@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/weekMonthFragmentHost">
+
+    <fragment
+        android:id="@+id/weekMonthFragmentHost"
+        android:name="com.example.studytime3.ui.weekmonth.WeekMonthFragmentHost"
+        android:label="fragment_week_month_host"
+        tools:layout="@layout/fragment_week_month_host" >
+        <action
+            android:id="@+id/action_weekMonthFragmentHost_to_timerFragment"
+            app:destination="@id/timerFragment" />
+        <action
+            android:id="@+id/action_weekMonthFragmentHost_to_sessionSelectorFragment"
+            app:destination="@id/sessionSelectorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sessionSelectorFragment"
+        android:name="com.example.studytime3.ui.sessionselector.SessionSelectorFragment"
+        android:label="fragment_session_selector"
+        tools:layout="@layout/fragment_session_selector" >
+        <action
+            android:id="@+id/action_sessionSelectorFragment_to_weekMonthFragmentHost"
+            app:destination="@id/weekMonthFragmentHost" />
+        <action
+            android:id="@+id/action_sessionSelectorFragment_to_monthDetailFragment"
+            app:destination="@id/monthDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/timerFragment"
+        android:name="com.example.studytime3.ui.timer.TimerFragment"
+        android:label="TimerFragment" >
+        <action
+            android:id="@+id/action_timerFragment_to_weekMonthFragmentHost"
+            app:destination="@id/weekMonthFragmentHost" />
+    </fragment>
+    <fragment
+        android:id="@+id/monthDetailFragment"
+        android:name="com.example.studytime3.ui.monthdetail.MonthDetailFragment"
+        android:label="MonthDetailFragment" >
+        <action
+            android:id="@+id/action_monthDetailFragment_to_sessionSelectorFragment"
+            app:destination="@id/sessionSelectorFragment" />
+        <argument
+            android:name="monthSelected"
+            app:argType="integer" />
+    </fragment>
+</navigation>
