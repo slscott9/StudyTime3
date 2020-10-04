@@ -7,6 +7,7 @@ import com.example.studytime3.data.local.repos.StudyRepo
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 
 class MonthDetailViewModel @ViewModelInject constructor(
@@ -35,7 +36,7 @@ class MonthDetailViewModel @ViewModelInject constructor(
     val monthBarData = _monthSelected.switchMap {
         repo.getAllSessionsWithMatchingMonth(it).map {studyList ->
             setSessionWithMonthBarData(studyList)
-        }.asLiveData() //default timeout for coroutine is 5000ms
+        }.asLiveData(Dispatchers.Default + viewModelScope.coroutineContext) //default timeout for coroutine is 5000ms IMPORTANT should we pass Dispatcher.Default + view model scope here?
     }
 
     fun setMonthSelected(monthSelected: Int ){
@@ -44,7 +45,7 @@ class MonthDetailViewModel @ViewModelInject constructor(
 
 
 
-    private fun setSessionWithMonthBarData(monthsStudySessionList: List<StudySession>) : BarData {
+    private suspend fun setSessionWithMonthBarData(monthsStudySessionList: List<StudySession>) : BarData {
 
         val monthBarDataSetValues = MutableList(31) { BarEntry(0F, 0) }
         var monthBarData = BarData()

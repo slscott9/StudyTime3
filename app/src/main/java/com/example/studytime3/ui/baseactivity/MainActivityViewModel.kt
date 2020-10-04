@@ -28,12 +28,21 @@ class MainActivityViewModel @ViewModelInject constructor(
     private val currentMonth = LocalDateTime.now().monthValue
     private val currentDayOfMonth = LocalDateTime.now().dayOfMonth
 
+
+    //by giving .asLiveData view model scope this view models live data is only calculated once when the view model is live.
+    //When a change occurs the observers are notified and update their views
+    //without scope every time month or week view is instantiated the live data is recalculated because
+    //it does not have a scope to make it life cycle aware
+    //so scope tells live data and coroutines when to calculate -> within this view models lifecycle
+    //coroutines will be cancelled when this view model is destroyed
+
     private val lastSevenSessionsHours = repo.getLastSevenSessionsHours(
        currentMonth, currentDayOfMonth
-    ).asLiveData()
+    ).asLiveData(viewModelScope.coroutineContext)
 
     private val lastSevenStudySessions = lastSevenSessionsHours.switchMap {
-        repo.getLastSevenSessions(currentMonth, currentDayOfMonth).asLiveData()
+        repo.getLastSevenSessions(currentMonth, currentDayOfMonth)
+            .asLiveData(viewModelScope.coroutineContext)
     }
 
     val weekBarData = lastSevenStudySessions.map {
@@ -41,10 +50,12 @@ class MainActivityViewModel @ViewModelInject constructor(
     }
 
 
-    private val monthsSessionHours = repo.getSessionHoursForMonth(currentMonth).asLiveData()
+    private val monthsSessionHours = repo.getSessionHoursForMonth(currentMonth)
+        .asLiveData(viewModelScope.coroutineContext)
 
     private val monthsStudySession = monthsSessionHours.switchMap {
-        repo.getAllSessionsWithMatchingMonth(currentMonth).asLiveData()
+        repo.getAllSessionsWithMatchingMonth(currentMonth)
+            .asLiveData(viewModelScope.coroutineContext)
     }
 
     val monthBarData = monthsStudySession.map {

@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.studytime3.R
 import com.example.studytime3.databinding.FragmentWeekViewBinding
 import com.example.studytime3.ui.baseactivity.MainActivityViewModel
+import com.example.studytime3.ui.weekmonth.WeekMonthFragmentHostDirections
 import com.github.mikephil.charting.data.BarData
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,6 +37,20 @@ class WeekViewFragment : Fragment() {
         })
         return binding.root
     }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.addSessionChip.setOnClickListener {
+            findNavController().navigate(WeekMonthFragmentHostDirections.actionWeekMonthFragmentHostToTimerFragment())
+        }
+
+        binding.sessionsChip.setOnClickListener {
+            findNavController().navigate(WeekMonthFragmentHostDirections.actionWeekMonthFragmentHostToSessionSelectorFragment())
+        }
+    }
+
 
 
     private fun setBarChart(barData: BarData) {
