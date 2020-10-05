@@ -10,6 +10,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -33,48 +34,43 @@ class MainActivityViewModel @ViewModelInject constructor(
     private val currentDayOfMonth = LocalDateTime.now().dayOfMonth
 
 
-    //by giving .asLiveData view model scope this view models live data is only calculated once when the view model is live.
-    //When a change occurs the observers are notified and update their views
-    //without scope every time month or week view is instantiated the live data is recalculated because
-    //it does not have a scope to make it life cycle aware
-    //so scope tells live data and coroutines when to calculate -> within this view models lifecycle
-    //coroutines will be cancelled when this view model is destroyed
+
 
     /*
-        Think of twitter example maybe the flow should be the lastSevensessionsHours since this is not one shot operation
-        and changes like likes and retweets
+        LiveData<List<StudySession>> only updates when view model is instantiated again
 
-        The one shot operation would be the lastSevenStudySessions
+        Using flow list<StudySessions> makes this a dynamic stream. Dont need to use  list of hours live data as a trigger.
 
-        Its okay to emit all seven session all at once. but hours could change today since hours will keep being inserted into database
-         so it needs to be flow (stream of hours updates each time new hours are added
+        Think about what needs to be a stream and what can be live data.
+
+        The stream needs to be lastSevenSessions because user constantly inserts new study session into db
+
+        the weekBarData can be live data since it is dependant on lastSevenStudySessions and is related to a state change
+
+
      */
 
-    private val lastSevenSessionsHours = repo.getLastSevenSessionsHours(
-       currentMonth, currentDayOfMonth
-    ).asLiveData(viewModelScope.coroutineContext)
-
-    private val lastSevenStudySessions = lastSevenSessionsHours.switchMap {
+    private val lastSevenStudySessions =
         repo.getLastSevenSessions(currentMonth, currentDayOfMonth)
-            .asLiveData(viewModelScope.coroutineContext)
-    }
-
-    val weekBarData = lastSevenStudySessions.map {
-        setLastSevenSessionsBarData(it)
-    }
 
 
-    private val monthsSessionHours = repo.getSessionHoursForMonth(currentMonth)
-        .asLiveData(viewModelScope.coroutineContext)
+    private val _weekBarData = lastSevenStudySessions.map {
+        setLastSevenSessionsBarData(it) //map is a suspending function for flow
+    }.asLiveData(Dispatchers.Default + viewModelScope.coroutineContext)
 
-    private val monthsStudySession = monthsSessionHours.switchMap {
+    val weekBarData = _weekBarData
+
+
+
+    private val monthsStudySession =
         repo.getAllSessionsWithMatchingMonth(currentMonth)
-            .asLiveData(viewModelScope.coroutineContext)
-    }
 
-    val monthBarData = monthsStudySession.map {
+
+    private val _monthBarData = monthsStudySession.map {
         setSessionWithMonthBarData(it)
-    }
+    }.asLiveData(Dispatchers.Default + viewModelScope.coroutineContext)
+
+    val monthBarData = _monthBarData
 
 
 
@@ -110,7 +106,7 @@ class MainActivityViewModel @ViewModelInject constructor(
     }
 
 
-    private fun setLastSevenSessionsBarData(list: List<StudySession>): BarData {
+    private  fun setLastSevenSessionsBarData(list: List<StudySession>): BarData {
         val weekBarDataSetValues = ArrayList<BarEntry>()
         var weekBarData = BarData()
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.example.studytime3.R
 import com.example.studytime3.databinding.FragmentWeekViewBinding
@@ -15,6 +16,8 @@ import com.example.studytime3.ui.baseactivity.MainActivityViewModel
 import com.example.studytime3.ui.weekmonth.WeekMonthFragmentHostDirections
 import com.github.mikephil.charting.data.BarData
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WeekViewFragment : Fragment() {
@@ -30,11 +33,13 @@ class WeekViewFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_week_view, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.weekBarData.observe(viewLifecycleOwner, Observer {
+        viewModel.weekBarData.observe(viewLifecycleOwner){
             it?.let {
                 setBarChart(it)
             }
-        })
+        }
+
+
         return binding.root
     }
 

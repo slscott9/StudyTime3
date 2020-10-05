@@ -31,7 +31,7 @@ class StudyRepoImpl @Inject constructor(
 
     }
 
-    override fun getLastSevenSessions(
+    override  fun getLastSevenSessions(
         currentMonth: Int,
         currentDayOfMonth: Int
     ): Flow<List<StudySession>> {

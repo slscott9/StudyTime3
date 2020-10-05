@@ -34,7 +34,7 @@ interface StudyDao {
      */
 
     @Query("select * from study_table_3 where month= :currentMonth and dayOfMonth between :currentDayOfMonth - 6 and :currentDayOfMonth order by dayOfMonth asc")
-    fun getLastSevenSessions(currentMonth: Int, currentDayOfMonth: Int): Flow<List<StudySession>>
+     fun getLastSevenSessions(currentMonth: Int, currentDayOfMonth: Int): Flow<List<StudySession>>
 
 
     //Change to return study sessions

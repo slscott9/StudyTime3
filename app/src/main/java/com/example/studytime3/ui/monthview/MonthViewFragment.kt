@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.example.studytime3.R
 import com.example.studytime3.databinding.FragmentMonthViewBinding
@@ -15,6 +16,8 @@ import com.example.studytime3.ui.baseactivity.MainActivityViewModel
 import com.example.studytime3.ui.weekmonth.WeekMonthFragmentHostDirections
 import com.github.mikephil.charting.data.BarData
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MonthViewFragment : Fragment() {
@@ -31,11 +34,19 @@ class MonthViewFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_month_view, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.monthBarData.observe(viewLifecycleOwner, Observer {
+
+        viewModel.monthBarData.observe(viewLifecycleOwner){
             it?.let {
                 setBarChart(it)
             }
-        })
+        }
+
+        //Flow will only emit when terminal operator is called such as collect
+//        viewModel.viewModelScope.launch {
+//            viewModel.monthBarData.collect {
+//                setBarChart(it)
+//            }
+//        }
         return binding.root
     }
 
