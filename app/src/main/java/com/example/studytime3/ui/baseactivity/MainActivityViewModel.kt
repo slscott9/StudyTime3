@@ -14,6 +14,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
+/*
+    Changed flow test
+ */
+
 class MainActivityViewModel @ViewModelInject constructor(
     private val repo: StudyRepo,
     @Assisted savedStateHandle: SavedStateHandle
@@ -35,6 +39,16 @@ class MainActivityViewModel @ViewModelInject constructor(
     //it does not have a scope to make it life cycle aware
     //so scope tells live data and coroutines when to calculate -> within this view models lifecycle
     //coroutines will be cancelled when this view model is destroyed
+
+    /*
+        Think of twitter example maybe the flow should be the lastSevensessionsHours since this is not one shot operation
+        and changes like likes and retweets
+
+        The one shot operation would be the lastSevenStudySessions
+
+        Its okay to emit all seven session all at once. but hours could change today since hours will keep being inserted into database
+         so it needs to be flow (stream of hours updates each time new hours are added
+     */
 
     private val lastSevenSessionsHours = repo.getLastSevenSessionsHours(
        currentMonth, currentDayOfMonth

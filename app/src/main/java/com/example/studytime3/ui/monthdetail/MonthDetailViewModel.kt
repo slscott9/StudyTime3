@@ -45,7 +45,7 @@ class MonthDetailViewModel @ViewModelInject constructor(
 
 
 
-    private suspend fun setSessionWithMonthBarData(monthsStudySessionList: List<StudySession>) : BarData {
+    private  fun setSessionWithMonthBarData(monthsStudySessionList: List<StudySession>) : BarData {
 
         val monthBarDataSetValues = MutableList(31) { BarEntry(0F, 0) }
         var monthBarData = BarData()
